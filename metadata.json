@@ -1,0 +1,16 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Advait Vagerwal"
+            }
+        ],
+        "Category": "Appearance",
+        "Description": "Leaves an aesthetically pleasing trail behind the mouse cursor.",
+        "EnabledByDefault": false,
+        "Id": "mouse-smear",
+        "License": "MIT",
+        "Name": "Mouse Smear"
+    },
+    "X-KDE-ConfigModule": "kwin_mouse_smear_config"
+}
