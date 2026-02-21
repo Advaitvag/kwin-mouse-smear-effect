@@ -3,7 +3,7 @@
 # KWin Mouse Smear Effect Installer
 # Requires cmake, g++, and kwin development files.
 
-EFFECT_ID="mouse-smear"
+EFFECT_ID="kwin_mouse_smear"
 PLUGIN_NAME="kwin_mouse_smear"
 
 echo "Building..."

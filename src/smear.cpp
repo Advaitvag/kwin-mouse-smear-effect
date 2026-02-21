@@ -15,7 +15,7 @@ namespace KWin
 {
 
 MouseSmearEffect::MouseSmearEffect()
-    : m_lastUpdate(QDateTime::currentMSecsSinceEpoch())
+    : m_config(std::make_unique<SmearConfig>())
 {
     qDebug() << "MouseSmearEffect: Initializing C++ version";
     connect(effects, &EffectsHandler::mouseChanged, this, &MouseSmearEffect::slotMouseChanged);
@@ -28,11 +28,12 @@ MouseSmearEffect::~MouseSmearEffect()
 
 void MouseSmearEffect::reconfigure(ReconfigureFlags)
 {
-    SmearConfig::self()->read();
+    m_config->config()->reparseConfiguration();
+    m_config->read();
     m_trail.clear();
     m_dotTexture.reset();
     m_starTexture.reset();
-    qDebug() << "MouseSmearEffect: Reconfigured. Enabled:" << effects->isEffectLoaded(QStringLiteral("mouse-smear"));
+    qDebug() << "MouseSmearEffect: Reconfigured. ID: kwin_mouse_smear";
     effects->addRepaintFull();
 }
 
@@ -89,7 +90,7 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
     effects->paintScreen(renderTarget, viewport, mask, deviceRegion, screen);
 
     qint64 now = QDateTime::currentMSecsSinceEpoch();
-    int lifespan = SmearConfig::trailLifeSpan();
+    int lifespan = m_config->trailLifeSpan();
     
     // Cleanup old points
     while (!m_trail.isEmpty() && now - m_trail.first().timestamp > lifespan) {
@@ -124,14 +125,14 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
             float ageFactor = 1.0f - (float)(now - p1.timestamp) / lifespan;
             if (ageFactor < 0) ageFactor = 0;
 
-            QColor color = SmearConfig::trailColor();
-            if (SmearConfig::rainbowMode() == 1) {
+            QColor color = m_config->trailColor();
+            if (m_config->rainbowMode() == 1) {
                 color.setHsv((p1.timestamp / 10) % 360, 200, 255);
             }
             color.setAlphaF(ageFactor);
 
             binder.shader()->setUniform(GLShader::ColorUniform::Color, color);
-            glLineWidth(std::max(1.0f, (float)SmearConfig::trailSize() * ageFactor));
+            glLineWidth(std::max(1.0f, (float)m_config->trailSize() * ageFactor));
 
             if (auto result = vbo->map<GLVertex2D>(2)) {
                 auto map = *result;
@@ -145,7 +146,7 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
         }
 
         // Draw sparkles
-        if (SmearConfig::sparkleMode()) {
+        if (m_config->sparkleMode()) {
             ShaderBinder texBinder(ShaderTrait::MapTexture | ShaderTrait::TransformColorspace);
             texBinder.shader()->setUniform(GLShader::Mat4Uniform::ModelViewProjectionMatrix, viewport.projectionMatrix());
             texBinder.shader()->setColorspaceUniforms(ColorDescription::sRGB, renderTarget.colorDescription(), RenderingIntent::Perceptual);
@@ -157,8 +158,8 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
                         float ageFactor = 1.0f - (float)(now - p.timestamp) / lifespan;
                         float size = 16.0f * ageFactor;
                         
-                        float offsetX = sin(p.timestamp / 100.0) * SmearConfig::wander();
-                        float offsetY = (now - p.timestamp) * 0.001 * SmearConfig::gravity();
+                        float offsetX = sin(p.timestamp / 100.0) * m_config->wander();
+                        float offsetY = (now - p.timestamp) * 0.001 * m_config->gravity();
                         
                         QRectF rect(p.pos.x() * scale - size/2 + offsetX, p.pos.y() * scale - size/2 + offsetY, size, size);
                         

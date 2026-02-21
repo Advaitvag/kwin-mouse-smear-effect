@@ -11,6 +11,8 @@
 namespace KWin
 {
 
+class SmearConfig;
+
 struct TrailPoint
 {
     QPointF pos;
@@ -40,8 +42,7 @@ private:
     QList<TrailPoint> m_trail;
     std::unique_ptr<GLTexture> m_dotTexture;
     std::unique_ptr<GLTexture> m_starTexture;
-    
-    qint64 m_lastUpdate;
+    std::unique_ptr<SmearConfig> m_config;
 };
 
 } // namespace KWin

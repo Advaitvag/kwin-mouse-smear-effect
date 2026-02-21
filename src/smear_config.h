@@ -16,6 +16,7 @@ public:
 
 private:
     Ui::MouseSmearConfigForm m_ui;
+    KPluginMetaData m_data;
 };
 
 } // namespace KWin

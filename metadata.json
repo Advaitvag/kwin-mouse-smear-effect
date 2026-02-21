@@ -8,7 +8,7 @@
         "Category": "Appearance",
         "Description": "Leaves an aesthetically pleasing trail behind the mouse cursor.",
         "EnabledByDefault": false,
-        "Id": "mouse-smear",
+        "Id": "kwin_mouse_smear",
         "License": "MIT",
         "Name": "Mouse Smear"
     },
