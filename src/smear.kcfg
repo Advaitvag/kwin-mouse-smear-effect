@@ -20,12 +20,6 @@
         <entry name="SparkleMode" type="Bool">
             <default>false</default>
         </entry>
-        <entry name="SparkleColor" type="Color">
-            <default>#ffffff</default>
-        </entry>
-        <entry name="GradientMode" type="Bool">
-            <default>false</default>
-        </entry>
         <entry name="Gravity" type="Double">
             <default>0.0</default>
         </entry>
