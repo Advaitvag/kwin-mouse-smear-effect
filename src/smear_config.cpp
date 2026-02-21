@@ -17,8 +17,8 @@ MouseSmearEffectConfig::MouseSmearEffectConfig(QObject *parent, const KPluginMet
 {
     m_ui.setupUi(widget());
 
-    auto config = new SmearConfig();
-    addConfig(config, widget());
+    SmearConfig::instance(KSharedConfig::openConfig(QStringLiteral("kwinrc")));
+    addConfig(SmearConfig::self(), widget());
 
     auto updateColorEnabled = [this] {
         m_ui.kcfg_TrailColor->setEnabled(m_ui.kcfg_RainbowMode->currentIndex() == 0);
@@ -36,7 +36,7 @@ void MouseSmearEffectConfig::save()
                              QStringLiteral("/Effects"),
                              QStringLiteral("org.kde.kwin.Effects"),
                              QDBusConnection::sessionBus());
-    interface.call(QStringLiteral("reconfigureEffect"), m_data.pluginId());
+    interface.call(QStringLiteral("reconfigureEffect"), QStringLiteral("kwin_mouse_smear"));
 }
 
 } // namespace KWin

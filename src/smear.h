@@ -42,7 +42,6 @@ private:
     QList<TrailPoint> m_trail;
     std::unique_ptr<GLTexture> m_dotTexture;
     std::unique_ptr<GLTexture> m_starTexture;
-    std::unique_ptr<SmearConfig> m_config;
 };
 
 } // namespace KWin
