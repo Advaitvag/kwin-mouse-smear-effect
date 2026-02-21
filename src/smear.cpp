@@ -125,7 +125,7 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
             if (ageFactor < 0) ageFactor = 0;
 
             QColor color = SmearConfig::trailColor();
-            if (SmearConfig::rainbowMode()) {
+            if (SmearConfig::rainbowMode() == 1) {
                 color.setHsv((p1.timestamp / 10) % 360, 200, 255);
             }
             color.setAlphaF(ageFactor);

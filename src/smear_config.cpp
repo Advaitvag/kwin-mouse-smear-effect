@@ -1,6 +1,7 @@
 #include "smear_config.h"
 #include "smearconfig.h"
 #include <KPluginFactory>
+#include <QComboBox>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QDBusMessage>
@@ -16,6 +17,12 @@ MouseSmearEffectConfig::MouseSmearEffectConfig(QObject *parent, const KPluginMet
     m_ui.setupUi(widget());
 
     addConfig(SmearConfig::self(), widget());
+
+    auto updateColorEnabled = [this] {
+        m_ui.kcfg_TrailColor->setEnabled(m_ui.kcfg_RainbowMode->currentIndex() == 0);
+    };
+    connect(m_ui.kcfg_RainbowMode, &QComboBox::currentIndexChanged, updateColorEnabled);
+    updateColorEnabled();
 }
 
 void MouseSmearEffectConfig::save()

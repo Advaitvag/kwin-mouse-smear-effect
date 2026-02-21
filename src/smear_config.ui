@@ -12,24 +12,45 @@
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="0" column="0">
+    <widget class="QLabel" name="label_mode">
+     <property name="text">
+      <string>Color mode:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QComboBox" name="kcfg_RainbowMode">
+     <item>
+      <property name="text">
+       <string>Solid color</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Rainbow</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0">
     <widget class="QLabel" name="label_1">
      <property name="text">
       <string>Trail color:</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="1" column="1">
     <widget class="KColorButton" name="kcfg_TrailColor">
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
       <string>Trail decay (ms):</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QSpinBox" name="kcfg_TrailLifeSpan">
      <property name="minimum">
       <number>50</number>
@@ -45,14 +66,14 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="3" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
       <string>Trail size (px):</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <widget class="QSpinBox" name="kcfg_TrailSize">
      <property name="minimum">
       <number>1</number>
@@ -62,13 +83,6 @@
      </property>
      <property name="value">
       <number>32</number>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QCheckBox" name="kcfg_RainbowMode">
-     <property name="text">
-      <string>Rainbow mode</string>
      </property>
     </widget>
    </item>
