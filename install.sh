@@ -4,7 +4,6 @@
 # Requires cmake, g++, and kwin development files.
 
 EFFECT_ID="kwin_mouse_smear"
-PLUGIN_NAME="kwin_mouse_smear"
 
 echo "Building..."
 mkdir -p build
@@ -26,6 +25,9 @@ kwriteconfig6 --file kwinrc --group Plugins --key "${EFFECT_ID}Enabled" true
 
 echo "Reloading KWin configuration..."
 qdbus6 org.kde.KWin /KWin org.kde.KWin.reconfigure
+
+echo "Explicitly loading the effect..."
+qdbus6 org.kde.KWin /Effects org.kde.kwin.Effects.loadEffect "${EFFECT_ID}"
 
 echo "Done! The Mouse Smear effect should now be active."
 echo "You can customize it in System Settings -> Desktop Effects."

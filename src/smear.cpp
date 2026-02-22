@@ -26,6 +26,16 @@ MouseSmearEffect::~MouseSmearEffect()
 {
 }
 
+bool MouseSmearEffect::supported()
+{
+    return effects->openglContext() != nullptr;
+}
+
+bool MouseSmearEffect::enabledByDefault()
+{
+    return true;
+}
+
 void MouseSmearEffect::reconfigure(ReconfigureFlags)
 {
     SmearConfig::self()->read();
@@ -108,39 +118,42 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
 
         const auto scale = viewport.scale();
         
-        ShaderBinder binder(ShaderTrait::UniformColor | ShaderTrait::TransformColorspace);
-        binder.shader()->setUniform(GLShader::Mat4Uniform::ModelViewProjectionMatrix, viewport.projectionMatrix());
-        binder.shader()->setColorspaceUniforms(ColorDescription::sRGB, renderTarget.colorDescription(), RenderingIntent::Perceptual);
-
         GLVertexBuffer *vbo = GLVertexBuffer::streamingBuffer();
-        vbo->reset();
-        vbo->setAttribLayout(std::span(GLVertexBuffer::GLVertex2DLayout), sizeof(GLVertex2D));
 
         // Draw segments
-        for (int i = 0; i < m_trail.size() - 1; ++i) {
-            const auto &p1 = m_trail[i];
-            const auto &p2 = m_trail[i+1];
+        if (m_trail.size() >= 2) {
+            ShaderBinder binder(ShaderTrait::UniformColor | ShaderTrait::TransformColorspace);
+            binder.shader()->setUniform(GLShader::Mat4Uniform::ModelViewProjectionMatrix, viewport.projectionMatrix());
+            binder.shader()->setColorspaceUniforms(ColorDescription::sRGB, renderTarget.colorDescription(), RenderingIntent::Perceptual);
             
-            float ageFactor = 1.0f - (float)(now - p1.timestamp) / lifespan;
-            if (ageFactor < 0) ageFactor = 0;
+            vbo->reset();
+            vbo->setAttribLayout(std::span(GLVertexBuffer::GLVertex2DLayout), sizeof(GLVertex2D));
+            
+            for (int i = 0; i < m_trail.size() - 1; ++i) {
+                const auto &p1 = m_trail[i];
+                const auto &p2 = m_trail[i+1];
+                
+                float ageFactor = 1.0f - (float)(now - p1.timestamp) / lifespan;
+                if (ageFactor < 0) ageFactor = 0;
 
-            QColor color = SmearConfig::self()->trailColor();
-            if (SmearConfig::self()->rainbowMode() == 1) {
-                color.setHsv((p1.timestamp / 10) % 360, 200, 255);
-            }
-            color.setAlphaF(ageFactor);
+                QColor color = SmearConfig::self()->trailColor();
+                if (SmearConfig::self()->rainbowMode() == 1) {
+                    color.setHsv((p1.timestamp / 10) % 360, 200, 255);
+                }
+                color.setAlphaF(ageFactor);
 
-            binder.shader()->setUniform(GLShader::ColorUniform::Color, color);
-            glLineWidth(std::max(1.0f, (float)SmearConfig::self()->trailSize() * ageFactor));
+                binder.shader()->setUniform(GLShader::ColorUniform::Color, color);
+                glLineWidth(std::max(1.0f, (float)SmearConfig::self()->trailSize() * ageFactor));
 
-            if (auto result = vbo->map<GLVertex2D>(2)) {
-                auto map = *result;
-                map[0] = GLVertex2D{ .position = QVector2D(p1.pos.x() * scale, p1.pos.y() * scale), .texcoord = QVector2D() };
-                map[1] = GLVertex2D{ .position = QVector2D(p2.pos.x() * scale, p2.pos.y() * scale), .texcoord = QVector2D() };
-                vbo->unmap();
-                vbo->bindArrays();
-                vbo->draw(GL_LINES, 0, 2);
-                vbo->unbindArrays();
+                if (auto result = vbo->map<GLVertex2D>(2)) {
+                    auto map = *result;
+                    map[0] = GLVertex2D{ .position = QVector2D(p1.pos.x() * scale, p1.pos.y() * scale), .texcoord = QVector2D() };
+                    map[1] = GLVertex2D{ .position = QVector2D(p2.pos.x() * scale, p2.pos.y() * scale), .texcoord = QVector2D() };
+                    vbo->unmap();
+                    vbo->bindArrays();
+                    vbo->draw(GL_LINES, 0, 2);
+                    vbo->unbindArrays();
+                }
             }
         }
 
@@ -152,29 +165,42 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
             
             if (m_starTexture) {
                 m_starTexture->bind();
+                vbo->reset();
+                vbo->setAttribLayout(std::span(GLVertexBuffer::GLVertex2DLayout), sizeof(GLVertex2D));
+                
+                // Collect all active sparkles
+                QList<const TrailPoint*> activeSparkles;
                 for (const auto &p : m_trail) {
                     if ((p.timestamp % 100) < 20) {
-                        float ageFactor = 1.0f - (float)(now - p.timestamp) / lifespan;
-                        float size = 16.0f * ageFactor;
-                        
-                        float offsetX = sin(p.timestamp / 100.0) * SmearConfig::self()->wander();
-                        float offsetY = (now - p.timestamp) * 0.001 * SmearConfig::self()->gravity();
-                        
-                        QRectF rect(p.pos.x() * scale - size/2 + offsetX, p.pos.y() * scale - size/2 + offsetY, size, size);
-                        
-                        if (auto result = vbo->map<GLVertex2D>(6)) {
-                            auto map = *result;
-                            map[0] = GLVertex2D{ .position = QVector2D(rect.left(), rect.top()), .texcoord = QVector2D(0, 1) };
-                            map[1] = GLVertex2D{ .position = QVector2D(rect.right(), rect.top()), .texcoord = QVector2D(1, 1) };
-                            map[2] = GLVertex2D{ .position = QVector2D(rect.left(), rect.bottom()), .texcoord = QVector2D(0, 0) };
-                            map[3] = GLVertex2D{ .position = QVector2D(rect.left(), rect.bottom()), .texcoord = QVector2D(0, 0) };
-                            map[4] = GLVertex2D{ .position = QVector2D(rect.right(), rect.top()), .texcoord = QVector2D(1, 1) };
-                            map[5] = GLVertex2D{ .position = QVector2D(rect.right(), rect.bottom()), .texcoord = QVector2D(1, 0) };
-                            vbo->unmap();
-                            vbo->bindArrays();
-                            vbo->draw(GL_TRIANGLES, 0, 6);
-                            vbo->unbindArrays();
+                        activeSparkles.append(&p);
+                    }
+                }
+                
+                if (!activeSparkles.isEmpty()) {
+                    if (auto result = vbo->map<GLVertex2D>(activeSparkles.size() * 6)) {
+                        auto map = *result;
+                        int vIdx = 0;
+                        for (const auto *pPtr : activeSparkles) {
+                            const auto &p = *pPtr;
+                            float ageFactor = 1.0f - (float)(now - p.timestamp) / lifespan;
+                            float size = 16.0f * ageFactor;
+                            
+                            float offsetX = sin(p.timestamp / 100.0) * SmearConfig::self()->wander();
+                            float offsetY = (now - p.timestamp) * 0.001 * SmearConfig::self()->gravity();
+                            
+                            QRectF rect(p.pos.x() * scale - size/2 + offsetX, p.pos.y() * scale - size/2 + offsetY, size, size);
+                            
+                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.left(), rect.top()), .texcoord = QVector2D(0, 1) };
+                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.right(), rect.top()), .texcoord = QVector2D(1, 1) };
+                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.left(), rect.bottom()), .texcoord = QVector2D(0, 0) };
+                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.left(), rect.bottom()), .texcoord = QVector2D(0, 0) };
+                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.right(), rect.top()), .texcoord = QVector2D(1, 1) };
+                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.right(), rect.bottom()), .texcoord = QVector2D(1, 0) };
                         }
+                        vbo->unmap();
+                        vbo->bindArrays();
+                        vbo->draw(GL_TRIANGLES, 0, vIdx);
+                        vbo->unbindArrays();
                     }
                 }
             }
@@ -184,7 +210,9 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
         glDisable(GL_BLEND);
     }
     
-    effects->addRepaintFull();
+    if (!m_trail.isEmpty()) {
+        effects->addRepaintFull();
+    }
 }
 
 bool MouseSmearEffect::isActive() const

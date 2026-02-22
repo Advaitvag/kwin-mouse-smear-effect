@@ -9,7 +9,7 @@
 namespace KWin
 {
 
-K_PLUGIN_CLASS_WITH_JSON(MouseSmearEffectConfig, "metadata.json")
+K_PLUGIN_CLASS_WITH_JSON(MouseSmearEffectConfig, "../metadata.json")
 
 MouseSmearEffectConfig::MouseSmearEffectConfig(QObject *parent, const KPluginMetaData &data)
     : KCModule(parent, data)

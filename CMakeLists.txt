@@ -61,6 +61,6 @@ target_link_libraries(kwin_mouse_smear_config
 
 install(TARGETS kwin_mouse_smear DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/plugins)
 install(TARGETS kwin_mouse_smear_config DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/configs)
-install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear)
-install(FILES src/smear.kcfg DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear/contents/config RENAME main.xml)
-install(DIRECTORY package/contents/assets DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear/contents)
+install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/kwin_mouse_smear)
+install(FILES src/smear.kcfg DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/kwin_mouse_smear/contents/config RENAME main.xml)
+install(DIRECTORY package/contents/assets DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/kwin_mouse_smear/contents)
