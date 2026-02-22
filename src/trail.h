@@ -11,7 +11,7 @@
 namespace KWin
 {
 
-class SmearConfig;
+class TrailConfig;
 
 struct TrailPoint
 {
@@ -19,12 +19,12 @@ struct TrailPoint
     qint64 timestamp;
 };
 
-class MouseSmearEffect : public Effect
+class MouseTrailEffect : public Effect
 {
     Q_OBJECT
 public:
-    MouseSmearEffect();
-    ~MouseSmearEffect() override;
+    MouseTrailEffect();
+    ~MouseTrailEffect() override;
 
     static bool supported();
     static bool enabledByDefault();

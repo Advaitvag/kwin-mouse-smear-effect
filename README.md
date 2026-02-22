@@ -1,4 +1,4 @@
-# Mouse Smear KWin Effect
+# Mouse Trail KWin Effect
 
 An aesthetically pleasing mouse cursor trail effect for KDE Plasma 6.
 
@@ -39,7 +39,7 @@ chmod +x install.sh
 ```
 
 After installation, the effect will be enabled automatically. You can find it and customize its settings in:
-**System Settings -> Desktop Effects -> Mouse Smear**.
+**System Settings -> Desktop Effects -> Mouse Trail**.
 
 ## Uninstallation
 

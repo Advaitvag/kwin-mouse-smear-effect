@@ -1,5 +1,5 @@
-File=smear.kcfg
-ClassName=SmearConfig
+File=trail.kcfg
+ClassName=TrailConfig
 NameSpace=KWin
 Singleton=true
 Mutators=true

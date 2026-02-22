@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# KWin Mouse Smear Effect Installer
+# KWin Mouse Trail Effect Installer
 # Requires cmake, g++, and kwin development files.
 
-EFFECT_ID="mouse-smear"
+EFFECT_ID="mouse-trail"
 
 echo "Building..."
 mkdir -p build
@@ -29,5 +29,5 @@ qdbus6 org.kde.KWin /KWin org.kde.KWin.reconfigure
 echo "Explicitly loading the effect..."
 qdbus6 org.kde.KWin /Effects org.kde.kwin.Effects.loadEffect "${EFFECT_ID}"
 
-echo "Done! The Mouse Smear effect should now be active."
+echo "Done! The Mouse Trail effect should now be active."
 echo "You can customize it in System Settings -> Desktop Effects."

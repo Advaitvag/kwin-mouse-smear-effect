@@ -1,5 +1,5 @@
-#include "smear.h"
-#include "smearconfig.h"
+#include "trail.h"
+#include "trailconfig.h"
 #include "core/rendertarget.h"
 #include "core/renderviewport.h"
 #include "effect/effecthandler.h"
@@ -11,38 +11,38 @@
 namespace KWin
 {
 
-MouseSmearEffect::MouseSmearEffect()
+MouseTrailEffect::MouseTrailEffect()
 {
-    qDebug() << "MouseSmearEffect: Initializing C++ version";
-    SmearConfig::instance(effects->config());
-    connect(effects, &EffectsHandler::mouseChanged, this, &MouseSmearEffect::slotMouseChanged);
+    qDebug() << "MouseTrailEffect: Initializing C++ version";
+    TrailConfig::instance(effects->config());
+    connect(effects, &EffectsHandler::mouseChanged, this, &MouseTrailEffect::slotMouseChanged);
     reconfigure(ReconfigureAll);
 }
 
-MouseSmearEffect::~MouseSmearEffect()
+MouseTrailEffect::~MouseTrailEffect()
 {
 }
 
-bool MouseSmearEffect::supported()
+bool MouseTrailEffect::supported()
 {
     return effects->openglContext() != nullptr;
 }
 
-bool MouseSmearEffect::enabledByDefault()
+bool MouseTrailEffect::enabledByDefault()
 {
     return true;
 }
 
-void MouseSmearEffect::reconfigure(ReconfigureFlags)
+void MouseTrailEffect::reconfigure(ReconfigureFlags)
 {
     effects->config()->reparseConfiguration();
-    SmearConfig::self()->read();
+    TrailConfig::self()->read();
     m_trail.clear();
-    qDebug() << "MouseSmearEffect: Reconfigured. ID: mouse-smear";
+    qDebug() << "MouseTrailEffect: Reconfigured. ID: mouse-trail";
     effects->addRepaintFull();
 }
 
-void MouseSmearEffect::slotMouseChanged(const QPointF &pos, const QPointF &,
+void MouseTrailEffect::slotMouseChanged(const QPointF &pos, const QPointF &,
                                         Qt::MouseButtons, Qt::MouseButtons,
                                         Qt::KeyboardModifiers, Qt::KeyboardModifiers)
 {
@@ -54,12 +54,12 @@ void MouseSmearEffect::slotMouseChanged(const QPointF &pos, const QPointF &,
     effects->addRepaintFull();
 }
 
-void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const RenderViewport &viewport, int mask, const Region &deviceRegion, LogicalOutput *screen)
+void MouseTrailEffect::paintScreen(const RenderTarget &renderTarget, const RenderViewport &viewport, int mask, const Region &deviceRegion, LogicalOutput *screen)
 {
     effects->paintScreen(renderTarget, viewport, mask, deviceRegion, screen);
 
     qint64 now = QDateTime::currentMSecsSinceEpoch();
-    int lifespan = SmearConfig::self()->trailLifeSpan();
+    int lifespan = TrailConfig::self()->trailLifeSpan();
     
     // Cleanup old points
     while (!m_trail.isEmpty() && now - m_trail.first().timestamp > lifespan) {
@@ -94,14 +94,14 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
                 float ageFactor = 1.0f - (float)(now - p1.timestamp) / lifespan;
                 if (ageFactor < 0) ageFactor = 0;
 
-                QColor color = SmearConfig::self()->trailColor();
-                if (SmearConfig::self()->rainbowMode() == 1) {
+                QColor color = TrailConfig::self()->trailColor();
+                if (TrailConfig::self()->rainbowMode() == 1) {
                     color.setHsv((p1.timestamp / 10) % 360, 200, 255);
                 }
                 color.setAlphaF(ageFactor);
 
                 binder.shader()->setUniform(GLShader::ColorUniform::Color, color);
-                glLineWidth(std::max(1.0f, (float)SmearConfig::self()->trailSize() * ageFactor));
+                glLineWidth(std::max(1.0f, (float)TrailConfig::self()->trailSize() * ageFactor));
 
                 if (auto result = vbo->map<GLVertex2D>(2)) {
                     auto map = *result;
@@ -124,12 +124,12 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
     }
 }
 
-bool MouseSmearEffect::isActive() const
+bool MouseTrailEffect::isActive() const
 {
     return !m_trail.isEmpty() && !effects->isScreenLocked();
 }
 
-int MouseSmearEffect::requestedEffectChainPosition() const
+int MouseTrailEffect::requestedEffectChainPosition() const
 {
     return 10;
 }

@@ -1,14 +1,14 @@
-#include "smear.h"
+#include "trail.h"
 #include <KPluginFactory>
 
 namespace KWin
 {
 
-KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(MouseSmearEffect,
+KWIN_EFFECT_FACTORY_SUPPORTED_ENABLED(MouseTrailEffect,
                                       "../metadata.json",
-                                      return MouseSmearEffect::supported();
+                                      return MouseTrailEffect::supported();
                                       ,
-                                      return MouseSmearEffect::enabledByDefault();)
+                                      return MouseTrailEffect::enabledByDefault();)
 
 } // namespace KWin
 

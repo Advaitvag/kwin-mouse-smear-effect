@@ -9,7 +9,7 @@
         "Description": "Leaves an aesthetically pleasing trail behind the mouse cursor.",
         "EnabledByDefault": true,
         "License": "MIT",
-        "Name": "Mouse Smear"
+        "Name": "Mouse Trail"
     },
-    "X-KDE-ConfigModule": "mouse-smear-config"
+    "X-KDE-ConfigModule": "mouse-trail-config"
 }

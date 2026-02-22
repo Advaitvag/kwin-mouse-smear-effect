@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MouseSmearConfigForm</class>
- <widget class="QWidget" name="MouseSmearConfigForm">
+ <class>MouseTrailConfigForm</class>
+ <widget class="QWidget" name="MouseTrailConfigForm">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -79,7 +79,7 @@
       <number>1</number>
      </property>
      <property name="maximum">
-      <number>256</number>
+      <number>32</number>
      </property>
      <property name="value">
       <number>32</number>

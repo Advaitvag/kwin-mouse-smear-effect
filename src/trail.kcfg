@@ -4,7 +4,7 @@
       xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
       http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
     <kcfgfile arg="true"/>
-    <group name="Effect-mouse-smear">
+    <group name="Effect-mouse-trail">
         <entry name="TrailColor" type="Color">
             <default>#3daee9</default>
         </entry>
