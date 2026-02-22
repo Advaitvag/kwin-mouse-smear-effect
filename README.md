@@ -6,8 +6,6 @@ An aesthetically pleasing mouse cursor trail effect for KDE Plasma 6.
 
 - **Customizable Trail**: Adjust color, decay rate (lifespan), and size.
 - **Rainbow Mode**: Cycles through a spectrum of colors.
-- **Sparkle Mode**: Adds sparkling stars to your cursor movement.
-- **Environmental Effects**: Gravity and Wander (drift) settings for a more dynamic look.
 - **High Performance**: Native C++ implementation for smooth rendering.
 
 ## Requirements
@@ -25,7 +23,7 @@ To build from source, you will need:
 - **C++ Compiler** (supporting C++20)
 - **Extra CMake Modules (ECM)**
 - **KWin Development Files**
-- **Qt6 Libraries** (Quick, Widgets, Svg, DBus)
+- **Qt6 Libraries** (Quick, Widgets, DBus)
 - **KDE Frameworks 6 (KF6)** (Config, ConfigWidgets, GlobalAccel, I18n, CoreAddons, KCMUtils)
 
 On Fedora, you might need: `dnf install cmake extra-cmake-modules kwin-devel qt6-qtquick-devel kf6-kconfig-devel kf6-kconfigwidgets-devel kf6-kglobalaccel-devel kf6-ki18n-devel kf6-kcoreaddons-devel kf6-kcmutils-devel`

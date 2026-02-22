@@ -86,59 +86,6 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
-    <widget class="QCheckBox" name="kcfg_SparkleMode">
-     <property name="text">
-      <string>Sparkle mode</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0">
-    <widget class="QLabel" name="label_5">
-     <property name="text">
-      <string>Gravity:</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QDoubleSpinBox" name="kcfg_Gravity">
-     <property name="minimum">
-      <double>-1000.0</double>
-     </property>
-     <property name="maximum">
-      <double>1000.0</double>
-     </property>
-     <property name="singleStep">
-      <double>10.0</double>
-     </property>
-     <property name="value">
-      <double>0.0</double>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0">
-    <widget class="QLabel" name="label_6">
-     <property name="text">
-      <string>Wander (drift):</string>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="1">
-    <widget class="QDoubleSpinBox" name="kcfg_Wander">
-     <property name="minimum">
-      <double>0.0</double>
-     </property>
-     <property name="maximum">
-      <double>100.0</double>
-     </property>
-     <property name="singleStep">
-      <double>5.0</double>
-     </property>
-     <property name="value">
-      <double>20.0</double>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <customwidgets>

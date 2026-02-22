@@ -6,9 +6,6 @@
 #include "opengl/glutils.h"
 #include <QDateTime>
 #include <cmath>
-#include <QSvgRenderer>
-#include <QPainter>
-#include <QStandardPaths>
 #include <QDebug>
 
 namespace KWin
@@ -41,46 +38,8 @@ void MouseSmearEffect::reconfigure(ReconfigureFlags)
     effects->config()->reparseConfiguration();
     SmearConfig::self()->read();
     m_trail.clear();
-    m_dotTexture.reset();
-    m_starTexture.reset();
     qDebug() << "MouseSmearEffect: Reconfigured. ID: mouse-smear";
     effects->addRepaintFull();
-}
-
-void MouseSmearEffect::ensureTextures()
-{
-    if (m_dotTexture && m_starTexture) {
-        return;
-    }
-
-    QString assetsPath = QStandardPaths::locate(QStandardPaths::GenericDataLocation, 
-                                                QStringLiteral("kwin/effects/mouse-smear/contents/assets"), 
-                                                QStandardPaths::LocateDirectory);
-    if (assetsPath.isEmpty()) {
-        assetsPath = QStringLiteral("/usr/share/kwin/effects/mouse-smear/contents/assets");
-    }
-
-    qDebug() << "MouseSmearEffect: Loading textures from" << assetsPath;
-
-    auto loadTexture = [](const QString &path, int size) {
-        QSvgRenderer renderer(path);
-        if (!renderer.isValid()) {
-            qWarning() << "MouseSmearEffect: Failed to load SVG from" << path;
-            return std::unique_ptr<GLTexture>();
-        }
-        QImage image(size, size, QImage::Format_ARGB32);
-        image.fill(Qt::transparent);
-        QPainter painter(&image);
-        renderer.render(&painter);
-        return std::unique_ptr<GLTexture>(GLTexture::upload(image));
-    };
-
-    if (!m_dotTexture) {
-        m_dotTexture = loadTexture(assetsPath + QStringLiteral("/dot.svg"), 128);
-    }
-    if (!m_starTexture) {
-        m_starTexture = loadTexture(assetsPath + QStringLiteral("/star.svg"), 128);
-    }
 }
 
 void MouseSmearEffect::slotMouseChanged(const QPointF &pos, const QPointF &,
@@ -110,8 +69,6 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
     if (m_trail.isEmpty()) {
         return;
     }
-
-    ensureTextures();
 
     if (effects->openglContext()) {
         glEnable(GL_BLEND);
@@ -154,55 +111,6 @@ void MouseSmearEffect::paintScreen(const RenderTarget &renderTarget, const Rende
                     vbo->bindArrays();
                     vbo->draw(GL_LINES, 0, 2);
                     vbo->unbindArrays();
-                }
-            }
-        }
-
-        // Draw sparkles
-        if (SmearConfig::self()->sparkleMode()) {
-            ShaderBinder texBinder(ShaderTrait::MapTexture | ShaderTrait::TransformColorspace);
-            texBinder.shader()->setUniform(GLShader::Mat4Uniform::ModelViewProjectionMatrix, viewport.projectionMatrix());
-            texBinder.shader()->setColorspaceUniforms(ColorDescription::sRGB, renderTarget.colorDescription(), RenderingIntent::Perceptual);
-            
-            if (m_starTexture) {
-                m_starTexture->bind();
-                vbo->reset();
-                vbo->setAttribLayout(std::span(GLVertexBuffer::GLVertex2DLayout), sizeof(GLVertex2D));
-                
-                // Collect all active sparkles
-                QList<const TrailPoint*> activeSparkles;
-                for (const auto &p : m_trail) {
-                    if ((p.timestamp % 100) < 20) {
-                        activeSparkles.append(&p);
-                    }
-                }
-                
-                if (!activeSparkles.isEmpty()) {
-                    if (auto result = vbo->map<GLVertex2D>(activeSparkles.size() * 6)) {
-                        auto map = *result;
-                        int vIdx = 0;
-                        for (const auto *pPtr : activeSparkles) {
-                            const auto &p = *pPtr;
-                            float ageFactor = 1.0f - (float)(now - p.timestamp) / lifespan;
-                            float size = 16.0f * ageFactor;
-                            
-                            float offsetX = sin(p.timestamp / 100.0) * SmearConfig::self()->wander();
-                            float offsetY = (now - p.timestamp) * 0.001 * SmearConfig::self()->gravity();
-                            
-                            QRectF rect(p.pos.x() * scale - size/2 + offsetX, p.pos.y() * scale - size/2 + offsetY, size, size);
-                            
-                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.left(), rect.top()), .texcoord = QVector2D(0, 1) };
-                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.right(), rect.top()), .texcoord = QVector2D(1, 1) };
-                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.left(), rect.bottom()), .texcoord = QVector2D(0, 0) };
-                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.left(), rect.bottom()), .texcoord = QVector2D(0, 0) };
-                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.right(), rect.top()), .texcoord = QVector2D(1, 1) };
-                            map[vIdx++] = GLVertex2D{ .position = QVector2D(rect.right(), rect.bottom()), .texcoord = QVector2D(1, 0) };
-                        }
-                        vbo->unmap();
-                        vbo->bindArrays();
-                        vbo->draw(GL_TRIANGLES, 0, vIdx);
-                        vbo->unbindArrays();
-                    }
                 }
             }
         }

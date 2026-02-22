@@ -40,11 +40,7 @@ private Q_SLOTS:
                           Qt::KeyboardModifiers modifiers, Qt::KeyboardModifiers oldmodifiers);
 
 private:
-    void ensureTextures();
-
     QList<TrailPoint> m_trail;
-    std::unique_ptr<GLTexture> m_dotTexture;
-    std::unique_ptr<GLTexture> m_starTexture;
 };
 
 } // namespace KWin

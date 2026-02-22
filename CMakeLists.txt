@@ -14,7 +14,7 @@ include(KDECompilerSettings NO_POLICY_SCOPE)
 include(FeatureSummary)
 include(ECMQtDeclareLoggingCategory)
 
-find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS Core Gui Quick Widgets Svg DBus)
+find_package(Qt6 ${QT_MIN_VERSION} REQUIRED COMPONENTS Core Gui Quick Widgets DBus)
 find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS Config ConfigWidgets GlobalAccel I18n CoreAddons KCMUtils)
 find_package(KWin REQUIRED)
 
@@ -40,7 +40,6 @@ target_link_libraries(mouse-smear PRIVATE
     Qt6::Core
     Qt6::Gui
     Qt6::OpenGL
-    Qt6::Svg
 )
 
 target_include_directories(mouse-smear PRIVATE ${KWin_INCLUDE_DIRS})
@@ -63,4 +62,3 @@ install(TARGETS mouse-smear DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/pl
 install(TARGETS mouse-smear-config DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/configs)
 install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear)
 install(FILES src/smear.kcfg DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear/contents/config RENAME main.xml)
-install(DIRECTORY package/contents/assets DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear/contents)
