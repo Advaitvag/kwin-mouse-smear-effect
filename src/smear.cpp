@@ -38,11 +38,12 @@ bool MouseSmearEffect::enabledByDefault()
 
 void MouseSmearEffect::reconfigure(ReconfigureFlags)
 {
+    effects->config()->reparseConfiguration();
     SmearConfig::self()->read();
     m_trail.clear();
     m_dotTexture.reset();
     m_starTexture.reset();
-    qDebug() << "MouseSmearEffect: Reconfigured. ID: kwin_mouse_smear";
+    qDebug() << "MouseSmearEffect: Reconfigured. ID: mouse-smear";
     effects->addRepaintFull();
 }
 

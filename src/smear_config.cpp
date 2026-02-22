@@ -36,7 +36,7 @@ void MouseSmearEffectConfig::save()
                              QStringLiteral("/Effects"),
                              QStringLiteral("org.kde.kwin.Effects"),
                              QDBusConnection::sessionBus());
-    interface.call(QStringLiteral("reconfigureEffect"), QStringLiteral("kwin_mouse_smear"));
+    interface.call(QStringLiteral("reconfigureEffect"), QStringLiteral("mouse-smear"));
 }
 
 } // namespace KWin

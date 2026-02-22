@@ -8,9 +8,8 @@
         "Category": "Appearance",
         "Description": "Leaves an aesthetically pleasing trail behind the mouse cursor.",
         "EnabledByDefault": true,
-        "Id": "kwin_mouse_smear",
         "License": "MIT",
         "Name": "Mouse Smear"
     },
-    "X-KDE-ConfigModule": "kwin_mouse_smear_config"
+    "X-KDE-ConfigModule": "mouse-smear-config"
 }

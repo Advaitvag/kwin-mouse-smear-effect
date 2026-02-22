@@ -30,9 +30,9 @@ kconfig_add_kcfg_files(smear_SOURCES
     src/smearconfig.kcfgc
 )
 
-add_library(kwin_mouse_smear MODULE ${smear_SOURCES})
+add_library(mouse-smear MODULE ${smear_SOURCES})
 
-target_link_libraries(kwin_mouse_smear PRIVATE
+target_link_libraries(mouse-smear PRIVATE
     KWin::kwin
     KF6::ConfigGui
     KF6::GlobalAccel
@@ -43,15 +43,15 @@ target_link_libraries(kwin_mouse_smear PRIVATE
     Qt6::Svg
 )
 
-target_include_directories(kwin_mouse_smear PRIVATE ${KWin_INCLUDE_DIRS})
+target_include_directories(mouse-smear PRIVATE ${KWin_INCLUDE_DIRS})
 
 # KCM
-set(kwin_mouse_smear_config_SRCS src/smear_config.cpp)
-ki18n_wrap_ui(kwin_mouse_smear_config_SRCS src/smear_config.ui)
-kconfig_add_kcfg_files(kwin_mouse_smear_config_SRCS src/smearconfig.kcfgc)
+set(mouse-smear_config_SRCS src/smear_config.cpp)
+ki18n_wrap_ui(mouse-smear_config_SRCS src/smear_config.ui)
+kconfig_add_kcfg_files(mouse-smear_config_SRCS src/smearconfig.kcfgc)
 
-add_library(kwin_mouse_smear_config MODULE ${kwin_mouse_smear_config_SRCS})
-target_link_libraries(kwin_mouse_smear_config
+add_library(mouse-smear-config MODULE ${mouse-smear_config_SRCS})
+target_link_libraries(mouse-smear-config
     KF6::KCMUtils
     KF6::CoreAddons
     KF6::I18n
@@ -59,8 +59,8 @@ target_link_libraries(kwin_mouse_smear_config
     Qt6::DBus
 )
 
-install(TARGETS kwin_mouse_smear DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/plugins)
-install(TARGETS kwin_mouse_smear_config DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/configs)
-install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/kwin_mouse_smear)
-install(FILES src/smear.kcfg DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/kwin_mouse_smear/contents/config RENAME main.xml)
-install(DIRECTORY package/contents/assets DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/kwin_mouse_smear/contents)
+install(TARGETS mouse-smear DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/plugins)
+install(TARGETS mouse-smear-config DESTINATION ${KDE_INSTALL_PLUGINDIR}/kwin/effects/configs)
+install(FILES metadata.json DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear)
+install(FILES src/smear.kcfg DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear/contents/config RENAME main.xml)
+install(DIRECTORY package/contents/assets DESTINATION ${KDE_INSTALL_DATADIR}/kwin/effects/mouse-smear/contents)
