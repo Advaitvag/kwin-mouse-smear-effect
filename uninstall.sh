@@ -10,6 +10,7 @@ kwriteconfig6 --file kwinrc --group Plugins --key "${EFFECT_ID}Enabled" false
 kwriteconfig6 --file kwinrc --group Plugins --key "mouse_trailEnabled" false
 kwriteconfig6 --file kwinrc --group Plugins --key "mouse_smearEnabled" false
 kwriteconfig6 --file kwinrc --group Plugins --key "kwin_mouse_smearEnabled" false
+kwriteconfig6 --file kwinrc --group Plugins --key "smear_mouse_trailEnabled" false
 
 echo "Removing plugin files..."
 
@@ -63,11 +64,15 @@ else
     done
 fi
 
-# Data directories (always try to remove these as manifest might not include the dir itself)
+# Data directories (always try to remove these as manifest might not include the dir itself).
+# Note: current versions no longer install anything here -- a binary KWin effect
+# carries its metadata inside the .so -- but older versions did, and the leftovers
+# make KWin log a KPackageStructure mismatch on every effect scan.
 sudo rm -rf /usr/share/kwin/effects/mouse-trail/
 sudo rm -rf /usr/share/kwin/effects/mouse-smear/
 sudo rm -rf /usr/share/kwin/effects/mouse_smear/
 sudo rm -rf /usr/share/kwin/effects/kwin_mouse_smear/
+sudo rm -f  /usr/share/kwin/effects/kwin_mouse_smear.json
 
 echo "Unloading effect from KWin..."
 qdbus6 org.kde.KWin /Effects org.kde.kwin.Effects.unloadEffect "${EFFECT_ID}"
